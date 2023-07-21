@@ -64,10 +64,24 @@ router.put("/:id", multer({storage: storage}).single("image"), (req, resp, next)
 });
   
 router.get("", (req, resp, next) => {
-    Post.find().then((documents)=>{
-        resp.status(200).json({
+    const pageSize = +req.query.pagesize;
+    const currentPage = +req.query.page;
+    const postQuery = Post.find();
+    let fetchedPost;
+    if(pageSize && currentPage){
+      postQuery
+        .skip(pageSize * (currentPage-1))
+        .limit(pageSize);
+    }
+    postQuery.then((documents)=>{
+      fetchedPost = documents;
+        return Post.count();
+        
+    }).then((count)=>{
+      resp.status(200).json({
         message: "data received successfully",
-        posts: documents,
+        posts: fetchedPost,
+        maxPosts: count
       });
     })
   });
