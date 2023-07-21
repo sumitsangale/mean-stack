@@ -10,3 +10,12 @@ mat-spinner {
 .info-text {
   text-align: center;
 }
+
+.post-image {
+  width: 80%;
+  margin: 0 auto;
+}
+
+.post-image img {
+  width: 100%;
+}
