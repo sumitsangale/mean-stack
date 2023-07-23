@@ -31,7 +31,8 @@ router.post("", checkAuth, multer({storage: storage}).single("image"), (req, res
     const post = new Post({
       title: req.body.title,
       content: req.body.content,
-      imagePath: url + "/images/" + req.file.filename
+      imagePath: url + "/images/" + req.file.filename,
+      creator: req.userData.userId
     });
     post.save().then((result)=>{
       resp.status(201).json({
@@ -40,7 +41,8 @@ router.post("", checkAuth, multer({storage: storage}).single("image"), (req, res
           id: result._id,
           title: result.title,
           content: result.content,
-          imagePath: result.imagePath
+          imagePath: result.imagePath,
+          creator: result.creator
         }
       });
     });
@@ -57,10 +59,15 @@ router.put("/:id", checkAuth, multer({storage: storage}).single("image"), (req, 
         _id: req.body.id,
         title: req.body.title,
         content: req.body.content,
-        imagePath: imagePath
+        imagePath: imagePath,
+        creator: req.userData.userId
     });
-    Post.updateOne({_id: req.params.id}, post).then((result)=>{
+    Post.updateOne({_id: req.params.id, creator: req.userData.userId}, post).then((result)=>{
+      if (result.modifiedCount > 0){
         resp.status(200).json({message: "updated successfully!"});
+      } else {
+        resp.status(401).json({ message: "Not authorized!" });
+      }
     });
 });
   
@@ -98,11 +105,15 @@ router.get("/:id", (req, resp, next)=>{
 })
   
 router.delete("/:id", checkAuth, (req, resp, next)=>{
-    Post.deleteOne({_id: req.params.id}).then((result)=>{
+    Post.deleteOne({_id: req.params.id, creator: req.userData.userId}).then((result)=>{
       console.log("delete post", result);
-      resp.status(200).json({
-        message: "post deleted!"
-      });
+      if (result.deletedCount > 0){
+        resp.status(200).json({
+          message: "post deleted!"
+        });
+      } else {
+        resp.status(401).json({ message: "Not authorized!" });
+      }
     });
   })
 
