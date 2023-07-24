@@ -55,7 +55,9 @@ export class AuthService{
         }
         this.http.post("http://localhost:3000/api/users/signup", authData)
             .subscribe((response)=>{
-                console.log(response)
+                this.router.navigate(['/login']);
+            }, error=>{
+                this.authStatusListner.next(false);
             })
     }
 
@@ -66,7 +68,6 @@ export class AuthService{
         }
         this.http.post<{token: string, expiresIn: number, userId: string}>("http://localhost:3000/api/users/login", authData)
             .subscribe((response)=>{
-                console.log(response)
                 const token = response.token;
                 this.token = token;
                 if(token){
@@ -80,6 +81,8 @@ export class AuthService{
                     this.authStatusListner.next(true);
                     this.router.navigate(['/']);
                 }
+            }, error=>{
+                this.authStatusListner.next(false);
             })
     }
 
