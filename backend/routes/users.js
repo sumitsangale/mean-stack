@@ -20,7 +20,7 @@ router.post("/signup", (req, resp, next)=>{
                 })
             }).catch((err)=>{
                 resp.status(500).json({
-                    error: err
+                    message: "Invalid aunthentication credentials!"
                 })
             })
         })

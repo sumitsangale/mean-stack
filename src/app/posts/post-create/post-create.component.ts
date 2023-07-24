@@ -1,17 +1,19 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute, ParamMap } from "@angular/router";
+import { Subscription } from 'rxjs';
 
 import { PostsService } from "../posts.service";
 import { Post } from "../post.model";
 import { mimetype } from "./mime-type.validator";
+import { AuthService } from "src/app/auth/auth.service";
 
 @Component({
   selector: "app-post-create",
   templateUrl: "./post-create.component.html",
   styleUrls: ["./post-create.component.css"]
 })
-export class PostCreateComponent implements OnInit {
+export class PostCreateComponent implements OnInit, OnDestroy {
   enteredTitle = "";
   enteredContent = "";
   post: Post;
@@ -20,9 +22,11 @@ export class PostCreateComponent implements OnInit {
   imagePreview: string;
   private mode = "create";
   private postId: string;
+  private authStatusSub: Subscription;
 
   constructor(
     public postsService: PostsService,
+    public authService: AuthService,
     public route: ActivatedRoute
   ) {
     this.createForm();
@@ -37,6 +41,9 @@ export class PostCreateComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.authStatusSub = this.authService.getAuthStatusListner().subscribe((isAuthenticate)=>{
+      this.isLoading = false;
+    })
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
       if (paramMap.has("postId")) {
         this.mode = "edit";
@@ -85,5 +92,9 @@ export class PostCreateComponent implements OnInit {
       );
     }
     this.form.reset();
+  }
+
+  ngOnDestroy() {
+    this.authStatusSub.unsubscribe();
   }
 }
