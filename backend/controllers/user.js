@@ -40,7 +40,7 @@ exports.userLogin = (req, resp, next)=>{
                     message: "Auth failed!"
                 })
             }
-            const token = jwt.sign({email: fetchedUser.email, userId: fetchedUser._id}, "secrete_this_string_should_be_longer", {expiresIn: "1h"});
+            const token = jwt.sign({email: fetchedUser.email, userId: fetchedUser._id}, process.env.JWT_KEY, {expiresIn: "1h"});
             resp.status(200).json({
                 token: token,
                 expiresIn: 3600,

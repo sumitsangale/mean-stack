@@ -9,7 +9,7 @@ const app = express();
 const password = "Vh1Jmlex5FHG8GVF";
 const userName = "sumitsangale126";
 
-mongoose.connect("mongodb+srv://sumitsangale126:Vh1Jmlex5FHG8GVF@angular-node.9xn9fib.mongodb.net/?retryWrites=true&w=majority").then(()=>{
+mongoose.connect("mongodb+srv://sumitsangale126:" + process.env.MONGO_ATLAS_PW + "@angular-node.9xn9fib.mongodb.net/?retryWrites=true&w=majority").then(()=>{
   console.log("connected successfully to mongoDB");
 }).catch(()=>{
   console.log("connection fail to mongoDB");
