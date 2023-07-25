@@ -17,7 +17,8 @@ mongoose.connect("mongodb+srv://sumitsangale126:" + process.env.MONGO_ATLAS_PW +
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use("/images", express.static(path.join("backend/images")));
+app.use("/images", express.static(path.join(__dirname, "images")));
+app.use("/", express.static(path.join(__dirname, "angular")));
 
 app.use((req, resp, next) => {
   resp.setHeader("Access-Control-Allow-Origin", "*");
@@ -34,6 +35,9 @@ app.use((req, resp, next) => {
 
 app.use("/api/posts", postsRoute);
 app.use("/api/users", userRoute);
+app.use((req, resp, next)=>{
+  resp.sendFile(path.join(__dirname, "angular", "index.html"));
+})
 
 
 module.exports = app;
